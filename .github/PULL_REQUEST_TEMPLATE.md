@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD041 -- PR bodies start below the top-level heading. -->
 ## Summary
 
 <!-- What changes and why. -->
