@@ -25,10 +25,9 @@ repos:
       pm: "Project management: types, labels, milestones, board, project.yml"
   handbook:
     components:
-      brand: "Logos, art, banners"
-      legal: "Privacy policy, terms, publisher notices"
-      playbooks: "Member playbooks per game"
-      policy: "Rules, code of conduct, moderation and appeals"
+      docs: "The community plan, README"
+      legal: "Questions for counsel"
+      playbooks: "Member playbooks per game, until they move to Discord"
       staff: "Staff guide and runbooks"
   htg:
     components:
@@ -52,8 +51,8 @@ repos:
   site:
     components:
       ci: "Build, link check, Pages deploy"
-      content: "Pages and copy"
-      theme: "Hugo theme, layout, styling"
+      content: "Pages and copy, including the rules and legal pages"
+      theme: "Hugo theme, layout, styling, brand kit"
   wardogs-server:
     components:
       config: "Live server configuration and its snapshot"

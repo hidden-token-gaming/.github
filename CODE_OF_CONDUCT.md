@@ -1,8 +1,10 @@
 # Code of conduct
 
 Hidden Token Gaming's code of conduct applies to everyone in our community spaces, including these
-repositories, our Discord server and our game servers. The full text lives in the handbook
-([`policy/`](https://github.com/hidden-token-gaming/handbook/tree/main/policy)).
+repositories, our Discord server and our game servers. The full text is on our website: the
+[code of conduct](https://hiddentoken.com/policy/code-of-conduct/), the
+[server rules](https://hiddentoken.com/policy/rules/) and
+[moderation and appeals](https://hiddentoken.com/policy/moderation/).
 
 In short: be respectful, no harassment or hate, no cheating, and follow each game publisher's rules.
 
