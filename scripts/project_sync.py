@@ -222,6 +222,7 @@ def main():
         raise SyncError("this reconciler reads framework_version 1.0, mode org")
     owner = spec["owner"]
     repos = spec["repos"]
+    validate_limits(spec)
     if args.repo:
         unknown = set(args.repo) - set(repos)
         if unknown:
@@ -244,6 +245,25 @@ def main():
         return 1
     print("Verified: no drift.")
     return 0
+
+
+LABEL_DESCRIPTION_MAX = 100  # GitHub rejects longer ones with a 422 only when the label is created
+
+
+def validate_limits(spec):
+    """Fail at load time on anything GitHub would reject mid-apply, so a dry run catches it."""
+    too_long = []
+    for lab in spec.get("labels", []):
+        if len(lab.get("description") or "") > LABEL_DESCRIPTION_MAX:
+            too_long.append(lab["name"])
+    for repo, cfg in spec["repos"].items():
+        for c, d in (cfg.get("components") or {}).items():
+            if len(d or "") > LABEL_DESCRIPTION_MAX:
+                too_long.append(f"{repo} component:{c}")
+    if too_long:
+        raise SyncError(
+            f"label description over {LABEL_DESCRIPTION_MAX} characters: {', '.join(too_long)}"
+        )
 
 
 def run(spec, owner, repos, dry_run, check_org, label):
