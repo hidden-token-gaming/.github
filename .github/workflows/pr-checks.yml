@@ -1,0 +1,16 @@
+# This repository's own PR checks, using the reusable workflows it publishes.
+name: pr-checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  title:
+    uses: ./.github/workflows/pr-title.yml
+  changelog:
+    uses: ./.github/workflows/changelog.yml

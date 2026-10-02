@@ -1,0 +1,26 @@
+name: Spike
+description: A time-boxed investigation that ends in a written finding
+type: Spike
+labels: ["needs-triage"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What do we need to find out, and what decision does it unblock?
+    validations:
+      required: true
+  - type: input
+    id: timebox
+    attributes:
+      label: Time box
+      placeholder: "e.g. 2 days"
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      value: A written finding on this issue, with sources, and the follow-up issues it creates.
+    validations:
+      required: true
