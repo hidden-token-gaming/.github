@@ -1,0 +1,19 @@
+# Reusable: apply component:* labels to a PR from the calling repo's .github/labeler.yml.
+# Callers trigger it on pull_request. Fork PRs are skipped, because their token can't write labels.
+name: labeler
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v7
+        with:
+          sync-labels: false
