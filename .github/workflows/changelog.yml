@@ -1,0 +1,52 @@
+# Reusable: a pull request must add at least one line inside the "## [Unreleased]" section of
+# CHANGELOG.md, unless it carries the `no-changelog` label.
+# Call from a repository whose pull_request trigger includes labeled/unlabeled, with:
+#   jobs:
+#     changelog:
+#       uses: hidden-token-gaming/.github/.github/workflows/changelog.yml@main
+name: changelog
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skipped by the no-changelog label
+        if: contains(github.event.pull_request.labels.*.name, 'no-changelog')
+        run: echo "no-changelog label present; skipping"
+      - uses: actions/checkout@v7
+        if: "!contains(github.event.pull_request.labels.*.name, 'no-changelog')"
+        with:
+          fetch-depth: 0
+      - name: CHANGELOG.md gains an entry under [Unreleased]
+        if: "!contains(github.event.pull_request.labels.*.name, 'no-changelog')"
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            echo "::error::No CHANGELOG.md in this repository. Add one, or label the PR no-changelog."; exit 1
+          fi
+          # Line range of the [Unreleased] section in the PR's version of the file.
+          read -r start end < <(awk '
+            /^## \[Unreleased\]/ {s = NR; next}
+            s && /^## \[/ && !e   {e = NR - 1}
+            END {if (s && !e) e = NR; print s + 0, e + 0}' CHANGELOG.md)
+          if [ "$start" -eq 0 ]; then
+            echo "::error::CHANGELOG.md has no '## [Unreleased]' section."; exit 1
+          fi
+          # Added line numbers (new-file side) from the diff against the PR base.
+          added=$(git diff -U0 "$BASE"...HEAD -- CHANGELOG.md | awk '
+            /^@@/ { split($3, a, ","); n = substr(a[1], 2); c = (a[2] == "" ? 1 : a[2]);
+                    for (i = 0; i < c; i++) print n + i }')
+          for l in $added; do
+            if [ "$l" -gt "$start" ] && [ "$l" -le "$end" ]; then
+              echo "CHANGELOG entry found under [Unreleased] (line $l)."; exit 0
+            fi
+          done
+          echo "::error::Add an entry under '## [Unreleased]' in CHANGELOG.md, or label the PR no-changelog."
+          exit 1

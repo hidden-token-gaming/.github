@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community questions and support
+    url: https://discord.gg/6AKnEQV
+    about: Ask in the Hidden Token Gaming Discord, or open a ticket in #support.
+  - name: Handbook
+    url: https://github.com/hidden-token-gaming/handbook
+    about: Rules, member guides and the community plan.
