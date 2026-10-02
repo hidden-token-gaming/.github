@@ -7,5 +7,5 @@ with more to come. We crew up, run ops, seed servers and play together.
 - **Website:** hiddentoken.com (coming soon)
 - **Handbook:** rules, member guides and how the community runs — [`handbook`](https://github.com/hidden-token-gaming/handbook)
 
-Our community platform is built on [gravel](https://github.com/jomkz/gravel), an open framework
+Our community platform is built on [gravel](https://github.com/gravel-project/gravel), an open framework
 for game servers, linked identities and cross-game stats.
