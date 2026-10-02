@@ -1,4 +1,4 @@
-# Markdown lint, same rules as the handbook. Two style rules are off on purpose:
+# Markdown lint, same rules as the handbook and the site. Two style rules are off on purpose:
 #   MD013 line length: prose and tables read better unwrapped, and rendered Markdown reflows anyway.
 #   MD060 table column style: compact tables are easier to edit than padded ones.
 config:

@@ -15,4 +15,6 @@ All notable changes to the org-level `.github` repository are documented here. T
 
 ### Changed
 
+- Public links no longer point at the handbook, which is private and staff-only (hidden-token-gaming/handbook#24). The code of conduct links the rules on hiddentoken.com, the org profile lists the live website and joins through hiddentoken.com/join, and the issue forms' contact links go to the join page and the rules. `docs/project-management.md` notes the plan is in the private handbook. `project.yml`: the handbook's components are now docs (the plan), legal (questions for counsel), playbooks and staff, and the site's content and theme components cover the rules, legal pages and brand kit (#10).
+
 - The org profile links gravel at `gravel-project/gravel` (#6).
