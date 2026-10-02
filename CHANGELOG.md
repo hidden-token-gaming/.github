@@ -10,4 +10,4 @@ All notable changes to the org-level `.github` repository are documented here. T
 - Org scaffolding: profile README, default community-health files (code of conduct, contributing,
   security, support), issue forms per issue type (Epic, Feature, Task, Spike, Bug), a PR template,
   and reusable workflows for Conventional-Commit PR titles and the CHANGELOG `[Unreleased]` check
-  with a `no-changelog` escape hatch (#2).
+  with a `no-changelog` escape hatch, plus the handbook's markdownlint config (#2).

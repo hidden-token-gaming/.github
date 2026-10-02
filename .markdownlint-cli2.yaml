@@ -1,0 +1,12 @@
+# Markdown lint, same rules as the handbook. Two style rules are off on purpose:
+#   MD013 line length: prose and tables read better unwrapped, and rendered Markdown reflows anyway.
+#   MD060 table column style: compact tables are easier to edit than padded ones.
+config:
+  default: true
+  MD013: false
+  MD060: false
+  MD024: {siblings_only: true}
+globs:
+  - "**/*.md"
+ignores:
+  - "node_modules/**"
