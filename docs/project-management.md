@@ -28,10 +28,16 @@ A new repo is added under `repos:` with its components, then synced.
 
 ## Two axes: phase × epic
 
-- **Phase is *when*:** a milestone per phase, `P0 — Foundations` to `P6 — Next games`, matching
-  the [plan](https://github.com/hidden-token-gaming/handbook/blob/main/docs/plan.md) (in the
-  private handbook, staff only). Assign every issue its phase at triage. Unscheduled work gets
-  `backlog`.
+- **Phase is *when*:** a milestone per phase, matching the
+  [plan](https://github.com/hidden-token-gaming/handbook/blob/main/docs/plan.md) (in the private
+  handbook, staff only). Two tracks run in parallel, and each milestone's description is its exit
+  gate (a condition to observe, never a date):
+  - the **community track**, `L0 — Launch-ready` to `L3 — Discoverable`, gated on members and
+    activity;
+  - the **platform track**, `P0 — Foundations` to `P6 — Next games`, gated on gravel, with `P1`
+    waiting for `L1` and `P2`'s node spend waiting for proven CS2 demand.
+
+  Assign every issue its phase at triage. Unscheduled work gets `backlog`.
 - **Epic is *which initiative*:** an Epic issue with native sub-issues, which can live in any repo.
   The board's *Sub-issues progress* rolls them up. An epic carries the milestone of the phase it
   finishes in.
