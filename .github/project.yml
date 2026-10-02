@@ -1,0 +1,127 @@
+# pm-framework v1.0, multi-repo org edition (hidden-token-gaming)
+#
+# The declarative source of truth for every repo's labels and phase milestones, the org's issue
+# types and the HTG Platform board's custom fields. Reconciled by `scripts/project-sync.sh`.
+#
+# Deviation from the single-repo framework: one spec covers all the org's repos. Shared labels and
+# milestones go to every repo listed under `repos`; each repo adds its own `component:*` labels.
+# See docs/project-management.md.
+#
+# The reconciler is NON-DESTRUCTIVE: it creates and updates what is listed here and never deletes
+# labels or milestones that are absent, so Dependabot's labels and ad-hoc milestones survive.
+
+framework_version: "1.0"
+mode: "org"
+owner: "hidden-token-gaming"
+
+# Every repo the spec manages, with its component labels (path-routed by each repo's
+# .github/labeler.yml and mirroring its commit scopes).
+component_color: "1d76db"
+repos:
+  .github:
+    components:
+      ci: "Workflows, issue forms, community health files"
+      docs: "Org profile and docs"
+      pm: "Project management: types, labels, milestones, board, project.yml"
+  handbook:
+    components:
+      brand: "Logos, art, banners"
+      legal: "Privacy policy, terms, publisher notices"
+      playbooks: "Member playbooks per game"
+      policy: "Rules, code of conduct, moderation and appeals"
+      staff: "Staff guide and runbooks"
+  htg:
+    components:
+      api: "Connect/protobuf APIs"
+      bot: "Discord bot (gateway + interactions)"
+      ci: "CI, release, images"
+      discordctl: "Discord-as-code tool"
+      docs: "README, ADRs, docs"
+      muster: "Muster crew-up service"
+      web: "Muster web pages (templ + htmx)"
+  deploy:
+    components:
+      backup: "CNPG PITR, object storage, restore drills"
+      ci: "Validation workflows"
+      cluster: "Node, k3s, Agones"
+      discord: "Discord server state and audits"
+      dns: "Cloudflare DNS, Tunnel, Pages"
+      gitops: "Flux manifests, Helm releases"
+      observability: "Metrics, logs, dashboards, alerts"
+      secrets: "SOPS/age secrets"
+  site:
+    components:
+      ci: "Build, link check, Pages deploy"
+      content: "Pages and copy"
+      theme: "Hugo theme, layout, styling"
+  wardogs-server:
+    components:
+      config: "Live server configuration and its snapshot"
+      helpers: "RCON helper scripts (wd.sh, wd.ps1)"
+      docs: "README, research reports and notes"
+
+# ---------------------------------------------------------------------------
+# Labels in every repo. `from:` renames an existing label in place (keeping its issues).
+# ---------------------------------------------------------------------------
+labels:
+  # -- Triage and workflow ----------------------------------------------------
+  - {name: "needs-triage", color: "fbca04", description: "Awaiting triage (type, milestone, component)"}
+  - {name: "backlog", color: "c5def5", description: "Not yet scheduled to a milestone"}
+  - {name: "blocked", color: "b60205", description: "Blocked by another issue or an external factor"}
+  - {name: "architecture", color: "5319e7", description: "Core design and ADRs"}
+  - {name: "no-changelog", color: "ededed", description: "PR intentionally has no CHANGELOG entry"}
+  # -- Games --------------------------------------------------------------------
+  - {name: "game:sot", color: "c2e0c6", description: "Concerns Sea of Thieves"}
+  - {name: "game:sc", color: "c2e0c6", description: "Concerns Star Citizen"}
+  - {name: "game:wardogs", color: "c2e0c6", description: "Concerns War Dogs"}
+  - {name: "game:cs2", color: "c2e0c6", description: "Concerns Counter-Strike 2"}
+  - {name: "game:pubg", color: "c2e0c6", description: "Concerns PUBG: BATTLEGROUNDS"}
+  - {name: "game:more", color: "c2e0c6", description: "Concerns games outside the launch five"}
+  # -- GitHub's defaults, kept consistent across repos -------------------------
+  - {name: "accessibility", color: "f143ab", description: "Barrier affecting people with disabilities"}
+  - {name: "bug", color: "d73a4a", description: "Something isn't working"}
+  - {name: "documentation", color: "0075ca", description: "Improvements or additions to documentation"}
+  - {name: "duplicate", color: "cfd3d7", description: "This issue or pull request already exists"}
+  - {name: "enhancement", color: "a2eeef", description: "New feature or request"}
+  - {name: "good first issue", color: "7057ff", description: "Good for newcomers"}
+  - {name: "help wanted", color: "008672", description: "Extra attention is needed"}
+  - {name: "invalid", color: "e4e669", description: "This doesn't seem right"}
+  - {name: "question", color: "d876e3", description: "Further information is requested"}
+  - {name: "wontfix", color: "ffffff", description: "This will not be worked on"}
+
+# ---------------------------------------------------------------------------
+# Phase milestones in every repo (undated; named by theme). Phases follow handbook docs/plan.md.
+# ---------------------------------------------------------------------------
+milestones:
+  - {title: "P0 — Foundations", description: "Org, Discord restructure, handbook, site, DNS — no gravel dependency"}
+  - {title: "P1 — Hub + identity", description: "Gravel core + node + Discord/Steam login + restore drill"}
+  - {title: "P2 — Servers with stats", description: "CS2 on Agones and War Dogs adapters, leaderboards, bans"}
+  - {title: "P3 — HTG bot v1", description: "Role sync, Linked Roles, live server cards, seeding pings"}
+  - {title: "P4 — Muster", description: "Crew-up service and playbooks for all five games"}
+  - {title: "P5 — Supporters + recognition", description: "Patreon sync, recognition roles, seasons, review flow"}
+  - {title: "P6 — Next games", description: "Adding games via catalog spec + playbook"}
+
+# ---------------------------------------------------------------------------
+# Org issue types (validate-only: the reconciler reports a missing or different type as drift
+# to fix in the org settings; it doesn't write org objects).
+# ---------------------------------------------------------------------------
+issue_types:
+  - {name: "Epic", description: "A large, multi-issue initiative tracked via sub-issues"}
+  - {name: "Feature", description: "A request, idea, or new functionality"}
+  - {name: "Task", description: "A specific piece of work"}
+  - {name: "Spike", description: "A time-boxed investigation that ends in a written finding"}
+  - {name: "Bug", description: "An unexpected problem or behavior"}
+
+# ---------------------------------------------------------------------------
+# The org Projects v2 board (validate-only: fields, types and options). Views and auto-add are
+# UI-only; see docs/project-management.md.
+# ---------------------------------------------------------------------------
+project:
+  owner: "hidden-token-gaming"
+  number: 1
+  title: "HTG Platform"
+  fields:
+    - {name: "Effort", type: "single_select", options: ["High", "Medium", "Low"]}
+    - {name: "Order", type: "number"}
+    - {name: "Start Date", type: "date"}
+    - {name: "Target Date", type: "date"}

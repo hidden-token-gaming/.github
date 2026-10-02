@@ -1,0 +1,26 @@
+# Path → component:* label for PRs (actions/labeler v7). Components are declared in project.yml.
+component:ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/workflows/**
+          - .github/ISSUE_TEMPLATE/**
+          - .github/PULL_REQUEST_TEMPLATE.md
+          - .github/labeler.yml
+          - CODE_OF_CONDUCT.md
+          - CONTRIBUTING.md
+          - SECURITY.md
+          - SUPPORT.md
+          - .markdownlint-cli2.yaml
+component:pm:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/project.yml
+          - scripts/project-sync.sh
+          - scripts/project_sync.py
+          - docs/project-management.md
+component:docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - profile/**
+          - README.md
+          - docs/**
