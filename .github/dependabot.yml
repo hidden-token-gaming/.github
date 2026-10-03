@@ -1,0 +1,15 @@
+# Weekly version updates. The PRs carry no-changelog, so the org's CHANGELOG check doesn't block them.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Every action bump, major ones included, arrives as one PR a week.
+    groups:
+      actions:
+        patterns: ["*"]
+    # The labeler workflow skips Dependabot PRs (read-only token), so the labels come from here.
+    labels: [no-changelog, component:ci]
+    commit-message:
+      prefix: "ci(deps)"
