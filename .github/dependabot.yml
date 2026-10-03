@@ -5,6 +5,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Every action bump, major ones included, arrives as one PR a week.
+    groups:
+      actions:
+        patterns: ["*"]
     # The labeler workflow skips Dependabot PRs (read-only token), so the labels come from here.
     labels: [no-changelog, component:ci]
     commit-message:
