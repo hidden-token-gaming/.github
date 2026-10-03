@@ -100,6 +100,46 @@ the fields. Set these in the board's UI (**…** menu → **Workflows**, and the
    reusable `changelog` check.
 5. Squash-merge on green CI.
 
+## Repository settings
+
+These are set by hand, because `project-sync.sh` covers labels, milestones, issue types and the
+board, not security settings. Re-check them with the commands below after any change.
+
+**Org:**
+
+- Two-factor authentication is required for every member and outside collaborator. GitHub only
+  lets you turn this on in the UI (org Settings → Authentication security). The API can read it
+  but not set it.
+- Members can't create repositories, public or private. Owners create them.
+- Base permission is read.
+
+**Every repo:** squash merge only, the squash commit takes the PR title, and head branches are
+deleted on merge. That's why the `pr-title` check is what lands on `main`.
+
+**Public repos (`.github`, `site`):** each has a branch ruleset named `main` on the default
+branch. The desired state is in [`.github/rulesets/`](../.github/rulesets/), one file per repo:
+
+- a pull request is required, squash only, with no approvals (one maintainer for now);
+- linear history and signed commits are required (GitHub signs squash merges made on the site);
+- force-pushes and deleting `main` are blocked;
+- these checks must pass: `title / title`, `changelog / changelog` and `label / label`. `site`
+  also requires `build` and `markdown`. Its preview `deploy` job isn't required, because a
+  Cloudflare problem shouldn't block a merge, and it doesn't run for forks or Dependabot.
+- There are no bypass actors, so owners also go through a PR.
+
+A job that's skipped, such as `label` on a fork or Dependabot PR, still passes the check.
+
+Free-plan private repos can't enforce rulesets, so in `handbook`, `htg`, `deploy` and
+`wardogs-server` squash-only merging and these checks rely on discipline.
+
+```bash
+# apply (create once; afterwards PUT to .../rulesets/<id> with the same file)
+gh api -X POST repos/hidden-token-gaming/site/rulesets --input .github/rulesets/site.json
+# verify
+gh api orgs/hidden-token-gaming --jq '{two_factor_requirement_enabled, members_can_create_repositories}'
+gh api repos/hidden-token-gaming/site/rules/branches/main --jq '.[].type'
+```
+
 ## Keeping it in sync
 
 ```bash
