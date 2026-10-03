@@ -6,6 +6,7 @@ component:ci:
           - .github/ISSUE_TEMPLATE/**
           - .github/PULL_REQUEST_TEMPLATE.md
           - .github/labeler.yml
+          - .github/dependabot.yml
           - CODE_OF_CONDUCT.md
           - CONTRIBUTING.md
           - SECURITY.md
