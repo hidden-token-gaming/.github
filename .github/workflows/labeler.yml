@@ -1,5 +1,6 @@
 # Reusable: apply component:* labels to a PR from the calling repo's .github/labeler.yml.
-# Callers trigger it on pull_request. Fork PRs are skipped, because their token can't write labels.
+# Callers trigger it on pull_request. Fork and Dependabot PRs are skipped, because their token
+# can't write labels; a skipped job still satisfies the required `label / label` check.
 name: labeler
 
 on:
@@ -11,7 +12,9 @@ permissions:
 
 jobs:
   label:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/labeler@v7
