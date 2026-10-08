@@ -115,8 +115,9 @@ It needs **`PROJECT_ADMIN_TOKEN`**, the same secret `project-sync.sh` uses in CI
   secrets) and a repo without the secret stay green. Verify after setting it: rerun a
   `project-add` run or open a test issue, and check the board.
 
-Set in all seven repos on 2026-10-08; every caller verified on the board the same day. Record the
-token's expiry here: *to be recorded*.
+Set in all seven repos on 2026-10-08; every caller verified on the board the same day. **The token
+expires on 2027-10-07.** Rotate before then: make a new token, update the file on the admin workstation,
+run the loop above, and change this date.
 
 ## Triage checklist
 
