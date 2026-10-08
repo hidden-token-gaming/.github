@@ -40,12 +40,12 @@ repos:
       web: "Muster web pages (templ + htmx)"
   deploy:
     components:
-      backup: "CNPG PITR, object storage, restore drills"
+      backup: "Postgres backups, object storage, restore drills"
       ci: "Validation workflows"
-      cluster: "Node, k3s, Agones"
+      cluster: "The hub's host: podman quadlets on earth now, the VM at L1, k3s and Agones with CS2"
       discord: "Discord server state and audits"
       dns: "Cloudflare DNS, Tunnel, Pages"
-      gitops: "Flux manifests, Helm releases"
+      gitops: "Flux manifests, Helm releases for the game node (with the operator, P4)"
       observability: "Metrics, logs, dashboards, alerts"
       secrets: "SOPS/age secrets"
       workers: "Cloudflare Workers: webhook pollers (War Dogs status, news) bridging the gap until the HTG bot"
@@ -92,7 +92,8 @@ labels:
 # ---------------------------------------------------------------------------
 # Phase milestones in every repo (undated; named by theme). Phases follow handbook docs/plan.md.
 # Two tracks run in parallel: the community track (L0–L3, gated on members and activity) and the
-# platform track (P0–P6, gated on gravel). Each milestone's description is its exit gate.
+# platform track (P0–P7, cut per game since 2026-10-08: the hub, then War Dogs, then Counter-Strike 2,
+# then the server-less games; D21). Each milestone's description is its exit gate.
 # ---------------------------------------------------------------------------
 milestones:
   - {title: "L0 — Launch-ready", description: "A stranger can find HTG, join, and know what to do in ten minutes; every visible channel describes something that works today; shared links unfurl; 2FA and rulesets on"}
@@ -100,12 +101,13 @@ milestones:
   - {title: "L2 — Cadence", description: "100+ members, 2+ anchors run four consecutive weeks, a runbook exercised once, Game Leads in 3+ games"}
   - {title: "L3 — Discoverable", description: "1,000 members and 8 weeks old (Discord Server Discovery's rule), 7-day chat retention tracked and stable"}
   - {title: "P0 — Foundations", description: "Org, Discord restructure, handbook, site, DNS — no gravel dependency"}
-  - {title: "P1 — Hub + identity", description: "Gravel core + hub + Discord/Steam login + restore drill; starts once L1 is reached"}
-  - {title: "P2 — Servers with stats", description: "CS2 on Agones and War Dogs adapters, leaderboards, bans; the node order and first GSLT wait for proven CS2 demand on the rented server"}
-  - {title: "P3 — HTG bot v1", description: "Role sync, Linked Roles, live server cards, seeding pings; retires the Workers bridges"}
-  - {title: "P4 — Muster", description: "Crew-up service and playbooks for all five games"}
-  - {title: "P5 — Supporters + recognition", description: "Patreon sync, recognition roles, seasons, review flow; needs counsel's sign-off (D5)"}
-  - {title: "P6 — Next games", description: "Adding games via catalog spec + playbook"}
+  - {title: "P1 — Hub", description: "The hub as one Go service on earth (podman, Postgres, cloudflared) with Discord login, Steam link, the bot's framework and OpenTofu state off earth. Gate: a member logs in, links Steam and gets the Linked Role; a slash command answers in production; restore rehearsed"}
+  - {title: "P2 — War Dogs complete", description: "War Dogs through every capability: live card, seeding pings, kill feed with gap records, K/D boards under members' names, moderation from web and Discord, session recaps, squad-up sessions, server config as code. Gate: a Wardogs Wednesday runs end to end with no hand step"}
+  - {title: "P3 — Hub hosted", description: "The hub leaves earth once L1 is reached: a US Central VM (S9), fixed egress IP, AllowedHosts set, timers, state and Grafana moved. Gate: earth runs no HTG job, and the War Dogs feed and RCON reach the hub without it"}
+  - {title: "P4 — Counter-Strike 2", description: "Rent first (D16), then Agones as the fully-managed driver: image, shared install, build watcher, GSLT pool, cards with connect buttons, PUG flow, MatchZy results. Gate: a patch day rolls the Fleet, vanilla fallback proven, the rented server retired"}
+  - {title: "P5 — Sea of Thieves, Star Citizen and PUBG", description: "The server-less games: Xbox, RSI and PUBG identity, crew, ops and squad finders, Custom Seas and custom-match events, the pubg and starcitizen adapters. Gate: one real event per game through Muster; PUBG results ingested automatically"}
+  - {title: "P6 — Supporters + recognition", description: "Patreon sync, recognition roles, seasons, review flow; needs counsel's sign-off (D5)"}
+  - {title: "P7 — Next games", description: "Adding games via catalog spec + playbook"}
 
 # ---------------------------------------------------------------------------
 # Org issue types (validate-only: the reconciler reports a missing or different type as drift

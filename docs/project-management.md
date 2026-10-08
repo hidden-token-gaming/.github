@@ -34,8 +34,12 @@ A new repo is added under `repos:` with its components, then synced.
   gate (a condition to observe, never a date):
   - the **community track**, `L0 — Launch-ready` to `L3 — Discoverable`, gated on members and
     activity;
-  - the **platform track**, `P0 — Foundations` to `P6 — Next games`, gated on gravel, with `P1`
-    waiting for `L1` and `P2`'s node spend waiting for proven CS2 demand.
+  - the **platform track**, `P0 — Foundations` to `P7 — Next games`, cut per game since the
+    2026-10-08 review (D21): `P1 — Hub`, `P2 — War Dogs complete`, `P3 — Hub hosted` (at `L1`),
+    `P4 — Counter-Strike 2` (node spend on proven demand), `P5 — Sea of Thieves, Star Citizen and
+    PUBG`, `P6 — Supporters + recognition`, `P7 — Next games`. Code no longer waits for `L1`
+    (D18); only community spend does. gravel-project/gravel's issues carry the same milestone
+    names and sit on the board too.
 
   Assign every issue its phase at triage. Unscheduled work gets `backlog`.
 - **Epic is *which initiative*:** an Epic issue with native sub-issues, which can live in any repo.
@@ -65,7 +69,10 @@ ranks work).
 
 - **Status:** Todo / In Progress / Done.
 - **Effort:** High / Medium / Low, set at filing.
-- **Order:** a number. Epics are `1–N`, and work items sit in per-phase thousand-bands.
+- **Order:** a number, set for every open item on 2026-10-08. Epics sit at multiples of 100 in
+  roadmap order (`P1` 100, `P2` 200, `L1` 300, `L0` 400, `P3` 500, `P4` 600, `L2` 700, `P5` 800,
+  `P6` 900, `L3` 1000, `P7` 1100), and each epic's work items follow it in dependency order
+  (`101`, `102`, …). A new item takes the next free number under its epic.
 - **Start Date** and **Target Date**.
 
 ### Runbook: what only the UI can do
@@ -76,10 +83,26 @@ the fields. Set these in the board's UI (**…** menu → **Workflows**, and the
 - **Views.** Today there is only **Open Issues** (table). Add:
   - **Roadmap:** timeline layout, using Start Date and Target Date, grouped by Milestone;
   - **Board:** board layout, columns by Status.
-- **Auto-add to project.** Add one workflow per repo with the filter `is:issue,pr is:open`.
-  On GitHub's Free plan a project may be limited in how many auto-add workflows it has. If so,
-  add the busiest repos first and add the rest at triage. The built-in workflows already on are:
-  item added → Todo, item closed and PR merged → Done, auto-close, and auto-add sub-issues.
+- **Auto-add to project** is done by Actions instead (below), so the board's own auto-add
+  workflow stays unset. The built-in workflows already on are: item added → Todo, item closed and
+  PR merged → Done, auto-close, and auto-add sub-issues.
+
+### Board automation: `add-to-project`
+
+Every repo (and gravel-project/gravel) calls the reusable
+[`add-to-project.yml`](../.github/workflows/add-to-project.yml) on `issues: opened, reopened` and
+`pull_request: opened, reopened`, which adds the item to the board with `actions/add-to-project`.
+It needs **`PROJECT_ADMIN_TOKEN`**, the same secret `project-sync.sh` uses in CI:
+
+- a classic personal access token with `repo`, `project` and `read:org`, named for the board,
+  one-year expiry (fine-grained tokens are owned by one org and can't reach gravel-project);
+- stored as an **organization secret** visible to all repositories, and as a **repository secret**
+  in `gravel-project/gravel`;
+- when it is missing, the job logs a notice and skips, so Dependabot and fork PRs (which get no
+  secrets) and a repo without the secret stay green. Verify after setting it: open a test issue
+  and check the board.
+
+Record the token's expiry date here when it is created: *not yet created (2026-10-08)*.
 
 ## Triage checklist
 

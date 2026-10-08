@@ -7,6 +7,7 @@ All notable changes to the org-level `.github` repository are documented here. T
 
 ### Added
 
+- A reusable `add-to-project` workflow that puts every newly opened or reopened issue and pull request on the HTG Platform board, called from this repo and (by their own `project-add.yml`) from every other HTG repo and gravel-project/gravel. It needs the `PROJECT_ADMIN_TOKEN` secret and skips with a notice when the token isn't available, so Dependabot and fork PRs stay green. The runbook in `docs/project-management.md` covers the token (#41).
 - Dependabot checks this repo's GitHub Actions weekly, bundling the bumps into one PR, including the ones the reusable workflows pin for every repo. Its PRs carry `no-changelog` and `component:ci`, and the labeler maps `.github/dependabot.yml` to `component:ci` (#25).
 
 - PM framework v1.0, multi-repo org edition: `.github/project.yml` declares every repo's labels and P0–P6 milestones, the org's issue types and the HTG Platform board's fields. `scripts/project-sync.sh` reconciles them non-destructively: a dry run exits 0 when there's no drift and 2 when there is, an API failure exits 1, and an apply ends with a verify pass. `docs/project-management.md` covers the deviation, the triage checklist and a runbook for what only the board UI can do. A reusable `labeler` workflow applies `component:*` labels by path, and this repo uses it with its own `.github/labeler.yml` (#3).
@@ -17,6 +18,7 @@ All notable changes to the org-level `.github` repository are documented here. T
 
 ### Changed
 
+- `project.yml` carries the 2026-10-08 re-cut: the platform milestones are `P1 — Hub`, `P2 — War Dogs complete`, `P3 — Hub hosted`, `P4 — Counter-Strike 2`, `P5 — Sea of Thieves, Star Citizen and PUBG`, `P6 — Supporters + recognition` and `P7 — Next games`, each with its gate, as renamed live by the review; `deploy`'s `cluster`, `gitops` and `backup` component descriptions no longer name k3s, CNPG or Flux for the hub. `docs/project-management.md` describes the phases, the Order convention as used and the board automation (#42).
 - The organisation profile links the new About page on hiddentoken.com (hidden-token-gaming/site#16).
 - Org security settings are written down. `docs/project-management.md` has a new "Repository settings" section covering required 2FA, owner-only repo creation, squash-only merging and the `main` rulesets on the public repos. The rulesets live as code in `.github/rulesets/` (`github.json`, `site.json`): they require a PR, linear and signed history and the org's PR checks, and they block force-pushes and deletion. The reusable `labeler` now skips Dependabot PRs as well as forks, since Dependabot's read-only token can't write labels and would fail the required `label / label` check (#24).
 - The org profile opens with HTG's one-liner, "Your hidden token to always having a game to play. Variety gaming for adults who play fair. 18+.", and links to the games page instead of listing the games (hidden-token-gaming/deploy#32).
