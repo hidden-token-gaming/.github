@@ -108,11 +108,15 @@ It needs **`PROJECT_ADMIN_TOKEN`**, the same secret `project-sync.sh` uses in CI
   done
   ```
 
+- passed to the reusable workflow with `secrets: inherit` from this org's repos, but **explicitly**
+  (`secrets: {PROJECT_ADMIN_TOKEN: ${{ secrets.PROJECT_ADMIN_TOKEN }}}`) from `gravel-project/gravel`:
+  inherited secrets do not reach a reusable workflow in another organization (verified 2026-10-08);
 - when it is missing, the job logs a notice and skips, so Dependabot and fork PRs (which get no
   secrets) and a repo without the secret stay green. Verify after setting it: rerun a
   `project-add` run or open a test issue, and check the board.
 
-Record the token's creation and expiry dates here: *created 2026-10-08; expiry to be recorded*.
+Set in all seven repos on 2026-10-08; every caller verified on the board the same day. Record the
+token's expiry here: *to be recorded*.
 
 ## Triage checklist
 

@@ -6,7 +6,7 @@
 #   jobs:
 #     add:
 #       uses: hidden-token-gaming/.github/.github/workflows/add-to-project.yml@main
-#       secrets: inherit
+#       secrets: inherit        # from another org, pass it by name instead; inherit doesn't cross orgs
 # Needs PROJECT_ADMIN_TOKEN (see docs/project-management.md). When the token isn't available
 # (Dependabot and fork PRs get no secrets; a repo may not have it yet) the job logs a notice and
 # skips instead of failing.
