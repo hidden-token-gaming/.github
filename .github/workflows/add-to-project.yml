@@ -1,0 +1,42 @@
+# Reusable: add a newly opened or reopened issue or pull request to the HTG Platform board.
+# Call from a repository with:
+#   on:
+#     issues: {types: [opened, reopened]}
+#     pull_request: {types: [opened, reopened]}
+#   jobs:
+#     add:
+#       uses: hidden-token-gaming/.github/.github/workflows/add-to-project.yml@main
+#       secrets: inherit
+# Needs PROJECT_ADMIN_TOKEN (see docs/project-management.md). When the token isn't available
+# (Dependabot and fork PRs get no secrets; a repo may not have it yet) the job logs a notice and
+# skips instead of failing.
+name: add-to-project
+
+on:
+  workflow_call:
+    secrets:
+      PROJECT_ADMIN_TOKEN:
+        required: false
+
+permissions: {}
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Is the project token available?
+        id: token
+        env:
+          TOKEN: ${{ secrets.PROJECT_ADMIN_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::PROJECT_ADMIN_TOKEN is not available to this run; not adding to the board"
+          fi
+      - uses: actions/add-to-project@v1.0.2
+        if: steps.token.outputs.present == 'true'
+        with:
+          project-url: https://github.com/orgs/hidden-token-gaming/projects/1
+          github-token: ${{ secrets.PROJECT_ADMIN_TOKEN }}

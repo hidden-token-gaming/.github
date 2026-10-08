@@ -1,0 +1,15 @@
+# This repository's own board automation, using the reusable workflow it publishes.
+name: project-add
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened]
+
+permissions: {}
+
+jobs:
+  add:
+    uses: ./.github/workflows/add-to-project.yml
+    secrets: inherit
