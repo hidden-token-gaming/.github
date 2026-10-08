@@ -96,13 +96,23 @@ It needs **`PROJECT_ADMIN_TOKEN`**, the same secret `project-sync.sh` uses in CI
 
 - a classic personal access token with `repo`, `project` and `read:org`, named for the board,
   one-year expiry (fine-grained tokens are owned by one org and can't reach gravel-project);
-- stored as an **organization secret** visible to all repositories, and as a **repository secret**
-  in `gravel-project/gravel`;
-- when it is missing, the job logs a notice and skips, so Dependabot and fork PRs (which get no
-  secrets) and a repo without the secret stay green. Verify after setting it: open a test issue
-  and check the board.
+- stored as a **repository secret in every repo**: the six here and `gravel-project/gravel`. Not
+  an organization secret: both orgs are on GitHub Free, where organization-level secrets are not
+  accessible by private repositories (GitHub's docs), and four of the six repos are private. The
+  token value lives on the admin workstation at `~/.config/htg/project-admin-token` (mode 600,
+  never in a repo), and the secrets are set from it without the value ever reaching a terminal:
 
-Record the token's expiry date here when it is created: *not yet created (2026-10-08)*.
+  ```bash
+  for r in hidden-token-gaming/{.github,handbook,site,htg,deploy,wardogs-server} gravel-project/gravel; do
+    gh secret set PROJECT_ADMIN_TOKEN -R "$r" < ~/.config/htg/project-admin-token
+  done
+  ```
+
+- when it is missing, the job logs a notice and skips, so Dependabot and fork PRs (which get no
+  secrets) and a repo without the secret stay green. Verify after setting it: rerun a
+  `project-add` run or open a test issue, and check the board.
+
+Record the token's creation and expiry dates here: *created 2026-10-08; expiry to be recorded*.
 
 ## Triage checklist
 
