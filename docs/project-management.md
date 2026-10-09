@@ -7,7 +7,7 @@ a **single org-level spec covers every repo** (below).
 
 The desired state lives in [`.github/project.yml`](../.github/project.yml):
 
-- labels and phase milestones for every repo;
+- labels and phase milestones for every repo, each milestone open or closed (`state: closed` closes a finished phase everywhere; a milestone with open issues stays open);
 - the org's issue types;
 - the board's fields.
 

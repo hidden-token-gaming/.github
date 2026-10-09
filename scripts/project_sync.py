@@ -123,11 +123,14 @@ def sync_milestones(rep, owner, repo, want):
     print(f"== {repo}: milestones ==")
     live = {m["title"]: m for m in gh_paged(f"repos/{owner}/{repo}/milestones?state=all&per_page=100")}
     for w in want:
-        title, desc = w["title"], w.get("description", "")
+        # state: open (the default) or closed, once a phase's gate is met and its issues are done.
+        title, desc, state = w["title"], w.get("description", ""), w.get("state", "open")
+        if state not in ("open", "closed"):
+            raise SystemExit(f"milestone {title!r}: state must be open or closed, not {state!r}")
         cur = live.get(title)
         if cur is None:
             rep.change(
-                f"create milestone {title!r}",
+                f"create milestone {title!r}" + (" (closed)" if state == "closed" else ""),
                 "api",
                 "-X",
                 "POST",
@@ -136,17 +139,29 @@ def sync_milestones(rep, owner, repo, want):
                 f"title={title}",
                 "-f",
                 f"description={desc}",
+                "-f",
+                f"state={state}",
             )
-        elif (cur.get("description") or "") != desc:
-            num = cur["number"]
+            continue
+        changed = []
+        if (cur.get("description") or "") != desc:
+            changed.append("description")
+        if cur.get("state") != state:
+            if state == "closed" and cur.get("open_issues", 0) > 0:
+                print(f"  milestone {title!r}: declared closed but has {cur['open_issues']} open issue(s); left open")
+            else:
+                changed.append(f"state {cur.get('state')} -> {state}")
+        if changed:
+            args = ["-f", f"description={desc}"]
+            if any(c.startswith("state") for c in changed):
+                args += ["-f", f"state={state}"]
             rep.change(
-                f"update milestone {title!r}: description",
+                f"update milestone {title!r}: {', '.join(changed)}",
                 "api",
                 "-X",
                 "PATCH",
-                f"repos/{owner}/{repo}/milestones/{num}",
-                "-f",
-                f"description={desc}",
+                f"repos/{owner}/{repo}/milestones/{cur['number']}",
+                *args,
             )
     unmanaged = sorted(set(live) - {w["title"] for w in want})
     if unmanaged:
