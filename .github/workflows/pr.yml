@@ -1,0 +1,103 @@
+# Reusable: the PR-hygiene checks in ONE job (.github#47). GitHub bills every job rounded up to a
+# whole minute, and the title, changelog and labeler checks each run for seconds, so one job
+# costs a third of three. It runs:
+#   - the PR title: a Conventional Commit with a lower-case subject (as pr-title.yml);
+#   - the CHANGELOG: a line added under "## [Unreleased]", unless the PR has `no-changelog` (as
+#     changelog.yml);
+#   - the labeler: component:* labels from the calling repo's .github/labeler.yml (as labeler.yml),
+#     skipped for fork and Dependabot PRs, whose token can't write labels.
+# All three run even when one fails; the last step fails the job if the title or the CHANGELOG
+# did. Call it from a pull_request workflow whose types include edited, labeled and unlabeled:
+#   jobs:
+#     pr:
+#       uses: hidden-token-gaming/.github/.github/workflows/pr.yml@main
+# The check is then "pr / pr". pr-title.yml, changelog.yml and labeler.yml stay for callers that
+# still require their checks by name (gravel-project/gravel).
+name: pr
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: The title is a Conventional Commit with a lower-case subject
+        id: title
+        continue-on-error: true
+        uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            refactor
+            perf
+            chore
+            ci
+            build
+            test
+            style
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" in "{title}" must start with a lower-case letter.
+
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Labels from .github/labeler.yml
+        if: >-
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.user.login != 'dependabot[bot]'
+        uses: actions/labeler@v7
+        with:
+          sync-labels: false
+
+      - name: CHANGELOG.md gains an entry under [Unreleased]
+        id: changelog
+        continue-on-error: true
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          SKIP: ${{ contains(github.event.pull_request.labels.*.name, 'no-changelog') }}
+        run: |
+          if [ "$SKIP" = "true" ]; then
+            echo "no-changelog label present; skipping"; exit 0
+          fi
+          if [ ! -f CHANGELOG.md ]; then
+            echo "::error::No CHANGELOG.md in this repository. Add one, or label the PR no-changelog."; exit 1
+          fi
+          # Line range of the [Unreleased] section in the PR's version of the file.
+          read -r start end < <(awk '
+            /^## \[Unreleased\]/ {s = NR; next}
+            s && /^## \[/ && !e   {e = NR - 1}
+            END {if (s && !e) e = NR; print s + 0, e + 0}' CHANGELOG.md)
+          if [ "$start" -eq 0 ]; then
+            echo "::error::CHANGELOG.md has no '## [Unreleased]' section."; exit 1
+          fi
+          # Added line numbers (new-file side) from the diff against the PR base.
+          added=$(git diff -U0 "$BASE"...HEAD -- CHANGELOG.md | awk '
+            /^@@/ { split($3, a, ","); n = substr(a[1], 2); c = (a[2] == "" ? 1 : a[2]);
+                    for (i = 0; i < c; i++) print n + i }')
+          for l in $added; do
+            if [ "$l" -gt "$start" ] && [ "$l" -le "$end" ]; then
+              echo "CHANGELOG entry found under [Unreleased] (line $l)."; exit 0
+            fi
+          done
+          echo "::error::Add an entry under '## [Unreleased]' in CHANGELOG.md, or label the PR no-changelog."
+          exit 1
+
+      - name: Every check passed
+        env:
+          TITLE: ${{ steps.title.outcome }}
+          CHANGELOG: ${{ steps.changelog.outcome }}
+        run: |
+          echo "title: $TITLE, changelog: $CHANGELOG"
+          [ "$TITLE" = "success" ] && [ "$CHANGELOG" = "success" ]

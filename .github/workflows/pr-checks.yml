@@ -1,4 +1,4 @@
-# This repository's own PR checks, using the reusable workflows it publishes.
+# This repository's own PR checks: the org's one-job PR hygiene (pr.yml, .github#47).
 name: pr-checks
 
 on:
@@ -7,10 +7,13 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
+
+# A newer event on the same PR replaces a run still going, so a superseded run stops billing.
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
-  title:
-    uses: ./.github/workflows/pr-title.yml
-  changelog:
-    uses: ./.github/workflows/changelog.yml
+  pr:
+    uses: ./.github/workflows/pr.yml
