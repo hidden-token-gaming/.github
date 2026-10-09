@@ -44,23 +44,15 @@
         "do_not_enforce_on_create": false,
         "required_status_checks": [
           {
-            "context": "title / title",
-            "integration_id": 15368
-          },
-          {
-            "context": "changelog / changelog",
-            "integration_id": 15368
-          },
-          {
-            "context": "label / label",
-            "integration_id": 15368
-          },
-          {
             "context": "build",
             "integration_id": 15368
           },
           {
             "context": "markdown",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr / pr",
             "integration_id": 15368
           }
         ]
