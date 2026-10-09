@@ -11,12 +11,24 @@
 #   jobs:
 #     pr:
 #       uses: hidden-token-gaming/.github/.github/workflows/pr.yml@main
+#       with:
+#         runs-on: ${{ vars.HTG_RUNS_ON || 'ubuntu-latest' }}   # private repositories only
 # The check is then "pr / pr". pr-title.yml, changelog.yml and labeler.yml stay for callers that
 # still require their checks by name (gravel-project/gravel).
 name: pr
 
 on:
   workflow_call:
+    inputs:
+      runs-on:
+        description: >-
+          Where the job runs. A private repository passes the org variable HTG_RUNS_ON with
+          ubuntu-latest as its fallback, so the job lands on the self-hosted runners on earth
+          (hidden-token-gaming/deploy#138); a public repository leaves it out and GitHub's
+          runners take the job.
+        type: string
+        required: false
+        default: ubuntu-latest
 
 permissions:
   contents: read
@@ -24,7 +36,7 @@ permissions:
 
 jobs:
   pr:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - name: The title is a Conventional Commit with a lower-case subject
         id: title
