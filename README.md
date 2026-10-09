@@ -27,3 +27,4 @@ jobs:
   changelog:
     uses: hidden-token-gaming/.github/.github/workflows/changelog.yml@main
 ```
+
