@@ -1,0 +1,17 @@
+# The org's scripts (project sync, board status): lint and unit tests on every PR that touches them.
+name: scripts
+
+on:
+  pull_request:
+    paths: ["scripts/**", ".github/workflows/scripts.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: pipx run ruff check scripts
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
