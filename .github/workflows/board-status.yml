@@ -1,0 +1,63 @@
+# Keeps the HTG Platform board's Status in step with the work (.github#52): every 15 minutes the
+# reconciler moves an open issue that a PR names (closing keyword or "Part of") to In Progress, one
+# labelled `verifying` to Verifying, and a closed one the built-in workflow missed to Done. On
+# Mondays it also writes the drift report (what it can't fix) into one tracking issue here.
+# Needs PROJECT_ADMIN_TOKEN (docs/project-management.md); without it the job logs a notice and
+# skips.
+name: board-status
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"  # reconcile
+    - cron: "0 12 * * 1"    # reconcile and report, Mondays 12:00 UTC
+  workflow_dispatch:
+    inputs:
+      report:
+        description: "Also write the drift report"
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: board-status
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PROJECT_ADMIN_TOKEN }}
+      REPORT: ${{ github.event.schedule == '0 12 * * 1' || inputs.report }}
+    steps:
+      - name: Is the project token available?
+        id: token
+        run: |
+          if [ -n "$GH_TOKEN" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::PROJECT_ADMIN_TOKEN is not available to this run; not reconciling the board"
+          fi
+      - uses: actions/checkout@v7
+        if: steps.token.outputs.present == 'true'
+      - name: Reconcile the board's Status
+        if: steps.token.outputs.present == 'true'
+        run: |
+          args=(--apply)
+          if [ "$REPORT" = "true" ]; then args+=(--report drift.md); fi
+          python3 scripts/board_status.py "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Update the drift report issue
+        if: steps.token.outputs.present == 'true' && env.REPORT == 'true'
+        run: |
+          title="Board drift report"
+          n=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "in:title \"$title\"" --json number,title \
+            --jq ".[] | select(.title == \"$title\") | .number" | head -1)
+          body=$(printf '%s\n\n%s\n' "$(cat drift.md)" "Written by the board-status workflow every Monday (.github#52). Fix an item by moving it, labelling it \`verifying\`, or closing it with its evidence.")
+          if [ -z "$n" ]; then
+            n=$(gh issue create -R "$GITHUB_REPOSITORY" --title "$title" --body "$body" | grep -o '[0-9]*$')
+          else
+            gh issue edit "$n" -R "$GITHUB_REPOSITORY" --body "$body"
+          fi
+          count=$(head -1 drift.md | grep -o '[0-9]* item' | grep -o '[0-9]*')
+          if [ "${count:-0}" -gt 0 ]; then
+            gh issue comment "$n" -R "$GITHUB_REPOSITORY" --body "$(head -1 drift.md) The list is in the issue body."
+          fi

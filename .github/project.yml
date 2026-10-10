@@ -68,6 +68,7 @@ labels:
   - {name: "needs-triage", color: "fbca04", description: "Awaiting triage (type, milestone, component)"}
   - {name: "backlog", color: "c5def5", description: "Not yet scheduled to a milestone"}
   - {name: "blocked", color: "b60205", description: "Blocked by another issue or an external factor"}
+  - {name: "verifying", color: "fbca04", description: "Built and live; waiting for the done-when proof (board: Verifying)"}
   - {name: "architecture", color: "5319e7", description: "Core design and ADRs"}
   - {name: "no-changelog", color: "ededed", description: "PR intentionally has no CHANGELOG entry"}
   # -- Games --------------------------------------------------------------------
@@ -131,6 +132,7 @@ project:
   number: 1
   title: "HTG Platform"
   fields:
+    - {name: "Status", type: "single_select", options: ["Todo", "In Progress", "Verifying", "Done"]}
     - {name: "Effort", type: "single_select", options: ["High", "Medium", "Low"]}
     - {name: "Order", type: "number"}
     - {name: "Start Date", type: "date"}

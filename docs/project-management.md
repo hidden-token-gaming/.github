@@ -67,7 +67,13 @@ ranks work).
 
 [HTG Platform](https://github.com/orgs/hidden-token-gaming/projects/1). Fields:
 
-- **Status:** Todo / In Progress / Done.
+- **Status:** Todo / In Progress / Verifying / Done, kept current by automation (below):
+  - **Todo:** not started.
+  - **In Progress:** a PR that is open or merged names it as work ("Closes #N", or "Part of #N" /
+    "Part of owner/repo#N" for one of several PRs).
+  - **Verifying:** built and live, waiting for its done-when proof (a deploy, a live session, a date).
+    Set it with the **`verifying`** label; take the label off to go back to In Progress.
+  - **Done:** closed. Close an issue when its done-when is met, with the evidence in a comment.
 - **Effort:** High / Medium / Low, set at filing.
 - **Order:** a number, set for every open item on 2026-10-08. Epics sit at multiples of 100 in
   roadmap order (`P1` 100, `P2` 200, `L1` 300, `L0` 400, `P3` 500, `P4` 600, `L2` 700, `P5` 800,
@@ -86,6 +92,30 @@ the fields. Set these in the board's UI (**…** menu → **Workflows**, and the
 - **Auto-add to project** is done by Actions instead (below), so the board's own auto-add
   workflow stays unset. The built-in workflows already on are: item added → Todo, item closed and
   PR merged → Done, auto-close, and auto-add sub-issues.
+
+### Board automation: `board-status`
+
+[`board-status.yml`](../.github/workflows/board-status.yml) runs
+[`scripts/board_status.py`](../scripts/board_status.py) every 15 minutes (.github#52). For every open
+issue on the board it reads the PRs that reference it and its labels, then:
+
+- moves it to **In Progress** when an open or merged PR names it as work (a closing keyword, or
+  "Part of", from any repo including gravel-project/gravel);
+- moves it to **Verifying** while it carries `verifying`, and back to In Progress when the label comes
+  off;
+- moves a closed issue the built-in workflow missed to **Done**.
+
+It never moves anything back to Todo and leaves PR items alone. On Mondays at 12:00 UTC it also
+writes the **drift report** into the open issue titled "Board drift report" in this repo: items In
+Progress with no open PR and no activity for 14 days, and items Verifying for more than 14 days.
+When there's anything new, it comments, so watchers get a notification. Run it by hand with
+`GH_TOKEN=… python3 scripts/board_status.py [--apply] [--report FILE]` (without `--apply`, a dry run).
+Tests: `python3 -m unittest discover -s scripts` (CI: `scripts.yml`).
+
+Why the label and the schedule: a PR's "Part of" reference can't close an issue, and a done-when
+often needs live proof, so open issues need a state between In Progress and Done. One central job,
+rather than a caller in every repo, also sees PRs that merge and needs no cross-org secrets for
+gravel.
 
 ### Board automation: `add-to-project`
 
