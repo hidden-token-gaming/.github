@@ -6,6 +6,8 @@
 #   jobs:
 #     add:
 #       uses: hidden-token-gaming/.github/.github/workflows/add-to-project.yml@main
+#       with:
+#         runs-on: ${{ vars.HTG_RUNS_ON || 'ubuntu-latest' }}   # private repositories only
 #       secrets: inherit        # from another org, pass it by name instead; inherit doesn't cross orgs
 # Needs PROJECT_ADMIN_TOKEN (see docs/project-management.md). When the token isn't available
 # (Dependabot and fork PRs get no secrets; a repo may not have it yet) the job logs a notice and
@@ -14,6 +16,16 @@ name: add-to-project
 
 on:
   workflow_call:
+    inputs:
+      runs-on:
+        description: >-
+          Where the job runs. A private repository passes the org variable HTG_RUNS_ON with
+          ubuntu-latest as its fallback, so the job lands on the self-hosted runners on earth
+          (hidden-token-gaming/deploy#138); a public repository leaves it out and GitHub's
+          runners take the job.
+        type: string
+        required: false
+        default: ubuntu-latest
     secrets:
       PROJECT_ADMIN_TOKEN:
         required: false
@@ -22,7 +34,7 @@ permissions: {}
 
 jobs:
   add:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - name: Is the project token available?
         id: token

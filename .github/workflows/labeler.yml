@@ -1,10 +1,21 @@
 # Reusable: apply component:* labels to a PR from the calling repo's .github/labeler.yml.
 # Callers trigger it on pull_request. Fork and Dependabot PRs are skipped, because their token
-# can't write labels; a skipped job still satisfies the required `label / label` check.
+# can't write labels; a skipped job still satisfies the required `label / label` check. A private
+# repository passes `with: {runs-on: ${{ vars.HTG_RUNS_ON || 'ubuntu-latest' }}}` (as for pr.yml).
 name: labeler
 
 on:
   workflow_call:
+    inputs:
+      runs-on:
+        description: >-
+          Where the job runs. A private repository passes the org variable HTG_RUNS_ON with
+          ubuntu-latest as its fallback, so the job lands on the self-hosted runners on earth
+          (hidden-token-gaming/deploy#138); a public repository leaves it out and GitHub's
+          runners take the job.
+        type: string
+        required: false
+        default: ubuntu-latest
 
 permissions:
   contents: read
@@ -15,7 +26,7 @@ jobs:
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.login != 'dependabot[bot]'
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     steps:
       - uses: actions/labeler@v7
         with:
