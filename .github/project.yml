@@ -59,6 +59,11 @@ repos:
       config: "Live server configuration and its snapshot"
       helpers: "RCON helper scripts (wd.sh, wd.ps1)"
       docs: "README, research reports and notes"
+  htg-assets:
+    components:
+      art: "A game's collected art and its inventory (one directory per game; pair with a game:* label)"
+      tools: "Asset-gathering scripts (Wix originals, perceptual-hash dedupe)"
+      docs: "README, the playbook for adding a game, each game's research record"
 
 # ---------------------------------------------------------------------------
 # Labels in every repo. `from:` renames an existing label in place (keeping its issues).

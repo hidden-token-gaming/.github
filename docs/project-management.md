@@ -16,7 +16,7 @@ The desired state lives in [`.github/project.yml`](../.github/project.yml):
 ## Deviation: one spec for many repos
 
 The framework's `project.yml` describes one repo. HTG's work spans several (`handbook`, `htg`,
-`deploy`, `site`, `wardogs-server`, `.github`) and runs on one board with one set of phases, so
+`deploy`, `site`, `wardogs-server`, `htg-assets`, `.github`) and runs on one board with one set of phases, so
 one spec lists them all:
 
 - **Shared labels** (triage, games, GitHub's defaults) and the **P0–P6 milestones** go to every
@@ -126,14 +126,14 @@ It needs **`PROJECT_ADMIN_TOKEN`**, the same secret `project-sync.sh` uses in CI
 
 - a classic personal access token with `repo`, `project` and `read:org`, named for the board,
   one-year expiry (fine-grained tokens are owned by one org and can't reach gravel-project);
-- stored as a **repository secret in every repo**: the six here and `gravel-project/gravel`. Not
+- stored as a **repository secret in every repo**: the seven here and `gravel-project/gravel`. Not
   an organization secret: both orgs are on GitHub Free, where organization-level secrets are not
-  accessible by private repositories (GitHub's docs), and four of the six repos are private. The
+  accessible by private repositories (GitHub's docs), and five of the seven repos are private. The
   token value lives on the admin workstation at `~/.config/htg/project-admin-token` (mode 600,
   never in a repo), and the secrets are set from it without the value ever reaching a terminal:
 
   ```bash
-  for r in hidden-token-gaming/{.github,handbook,site,htg,deploy,wardogs-server} gravel-project/gravel; do
+  for r in hidden-token-gaming/{.github,handbook,site,htg,deploy,wardogs-server,htg-assets} gravel-project/gravel; do
     gh secret set PROJECT_ADMIN_TOKEN -R "$r" < ~/.config/htg/project-admin-token
   done
   ```
@@ -197,8 +197,8 @@ branch. The desired state is in [`.github/rulesets/`](../.github/rulesets/), one
 
 A job that's skipped, such as `label` on a fork or Dependabot PR, still passes the check.
 
-Free-plan private repos can't enforce rulesets, so in `handbook`, `htg`, `deploy` and
-`wardogs-server` squash-only merging and these checks rely on discipline.
+Free-plan private repos can't enforce rulesets, so in `handbook`, `htg`, `deploy`,
+`wardogs-server` and `htg-assets` squash-only merging and these checks rely on discipline.
 
 ```bash
 # apply (create once; afterwards PUT to .../rulesets/<id> with the same file)
